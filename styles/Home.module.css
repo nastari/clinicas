@@ -123,6 +123,7 @@
 
 .principalinfo {
   margin-right: auto;
+  cursor: pointer;
 }
 
 .whats {
@@ -144,6 +145,7 @@
 .cep {
   margin-right: 5vw;
   font-size: 1.3vw;
+  cursor: pointer;
 }
 
 
@@ -196,7 +198,7 @@
 .infos {
   display: flex;
   justify-content: space-between;
-  padding: 2vw 2vw;
+  padding: 1vw 1vw;
 
 }
 
@@ -206,7 +208,8 @@
 }
 
 .unitp {
-  font-size: 3vw;
+  line-height: 0.8;
+  font-size: 2.8vw;
 }
 
 .abas {
@@ -256,10 +259,37 @@
 }
 
 
-@media (max-width: 330px) {
+@media (max-width: 600px) {
   .title {
     margin-left: 0px;
     padding: 10px;
     font-size: 16px;
   }
+  .unittitle {
+    font-size: 3.1vw;
+    font-weight: 500;
+  }
+  
+  .unitp {
+    line-height: 1;
+    font-size: 3vw;
+  }
+}
+
+.map {
+  height: 200px;
+  /* The height is 400 pixels */
+  width: 550px;
+  /* The width is the width of the web page */
+}
+
+@media ( max-width: 421px ){
+
+  .map {
+    height: 200px;
+    /* The height is 400 pixels */
+    width: 250px;
+    /* The width is the width of the web page */
+  }
+  
 }

@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import '../css/antd.less'; // global styles
 
 
+
 function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />
 }
