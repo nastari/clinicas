@@ -11,7 +11,7 @@
 .header {
   display: flex;
   border-radius: 10px;
-  background-color: rgb(225, 225, 255);
+  background-color: rgb(253, 226, 255);
   transition: all 0.5s;
   box-shadow: 0px 3px 3px rgba(0,0,0,0.25);
 }
@@ -21,10 +21,9 @@
 }
 
 .fita {
-  width: 25px;
-  background-color: rgb(242, 209, 255);
+  width: 20px;
+  background-color: rgba(170, 164, 255, 0.33);
   border-radius: 10px 0px 0px 10px;
-  padding: 10px;
 }
 
 .title {
@@ -40,13 +39,13 @@
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 5px;
   padding: 0px;
-  margin-left: 55px;
+  margin-left: 4.5vw;
 }
 
 .option {
   padding: 5px 5px;
   border-radius: 5px;
-  background-color: rgb(225, 225, 255);
+  background-color: rgb(253, 226, 255);
   text-align: center;
   letter-spacing: -1px;
   font-size: 14px;
@@ -66,10 +65,10 @@
 .unit {
   display: flex;
   height: 70px;
-  background-color: rgb(223, 230, 255);
+  background-color: rgb(247, 239, 248);
   border-radius: 15px 15px 0px 15px;
-  margin-bottom: 50px;
-  box-shadow: 0px 3px 3px rgba(0,0,0,0.15);
+  margin-bottom: 40px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.25);
   transition: all 0.5s;
 }
 
@@ -112,12 +111,14 @@
 
 .aba {
   width: 15%;
-  background-color: rgb(223, 230, 255);
-  margin-left: 1px;
+  z-index: 2;
+  background-color: rgb(247, 239, 248);
+  margin-left: 5px;
   padding: 5px;
   border-radius: 0px 0px 5px 5px;
-  box-shadow: 0px 3px 3px rgba(0,0,0,0.15);
-  font-size: 14px;
+  box-shadow: 0px 3px 3px rgba(0,0,0,0.25);
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .principalinfo {
@@ -173,10 +174,7 @@
   
   .fita {
     width: 25px;
-    background-color: rgb(242, 209, 255);
     border-radius: 10px 0px 0px 10px;
-    padding: 10px;
-    color: aqua;
   }
   
   .title {
@@ -223,8 +221,7 @@
 
 .aba {
   width: 21%;
-  background-color: rgb(223, 230, 255);
-  margin-left: 1px;
+  margin-left: 5px;
   padding: 5px;
   border-radius: 0px 0px 5px 5px;
   box-shadow: 0px 3px 3px rgba(0,0,0,0.15);
@@ -237,7 +234,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 255, 17, 0.4);
   border-radius: 2px 10px 2px 10px;
   transition: all 0.5s;
   cursor: pointer;

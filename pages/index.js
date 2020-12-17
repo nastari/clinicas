@@ -1,13 +1,50 @@
 import Head from 'next/head'
 import { useState, useEffect , useRef } from 'react'
 import styles from '../styles/Home.module.css'
+import data_ from '../data'
+import { Popover,  Empty } from 'antd';
 
 export default function Home() {
   const [ opcao , setOpcao ] = useState(0)
+  const [ clinics, setClinics ] = useState([])
+
+  const data = data_.filter( unit => { 
+    unit['SERVIÇOS DISPONÍVEIS'] = unit['SERVIÇOS DISPONÍVEIS'].toLowerCase()
+    if(unit["SERVIÇOS DISPONÍVEIS"].includes('pcmso')){
+      unit.PCMSO = true
+    } else {
+      unit.PCMSO = false
+    }
+
+    if(unit["SERVIÇOS DISPONÍVEIS"].includes('ppra')){
+      unit.PPRA = true
+    } else {
+      unit.PPRA = false
+    }
+
+    if(unit["SERVIÇOS DISPONÍVEIS"].includes('exames clínicos')){
+      unit.EXCLI = true
+    } else {
+      unit.EXCLI = false
+    }
+
+    if(unit["SERVIÇOS DISPONÍVEIS"].includes('exames complementares')){
+      unit.EXCOM = true
+    } else {
+      unit.EXCOM = false
+    }
+
+    unit.WHATSAPPFORMATTED = unit.WHATSAPP.replace(/[^0-9]/g, '');
+    return unit
+  })
 
   useEffect(() => {
+    a()
+  },[opcao]);
 
-  },[opcao])
+  function a(){
+    setClinics(data)
+  }
 
   const truncate = (input) => input.length > 25 ? `${input.substring(0, 25)}...` : input;
 
@@ -25,138 +62,82 @@ export default function Home() {
                 <h1 className={styles.title}>VISUALIZADOR DE CLÍNICAS</h1>
               </div>
               <div className={styles.options}>
-                <div className={styles.option}>
+              <Popover placement="bottom" content={"Lista de Clínicas"}>
+                <div onClick={() => setOpcao(0)} className={styles.option}>
                 <img className={styles.icon} style={{ height: 13}} src="/housee.svg" alt=""/>
                 </div>
-                <div className={styles.option}>
+                </Popover>
+                <Popover placement="bottom" content={"Colocar Ordem Alfabética"}>
+                <div onClick={() => setOpcao(1)} className={styles.option}>
                <p>ABC</p>
                 </div>
-                <div className={styles.option}>
+                </Popover>
+                <Popover placement="bottom" content={"Filtrar por PPRA"}>
+                <div onClick={() => setOpcao(2)} className={styles.option}>
                   <p>PPRA</p>
                 </div>
-                <div className={styles.option}>
+                </Popover>
+                <Popover placement="bottom"  content={"Filtrar por PCMSO"}>
+                <div onClick={() => setOpcao(3)} className={styles.option}>
                   <p>PCMSO</p>
                 </div>
-                <div className={styles.option}>
-                  <p>E.C</p>
+                </Popover>
+                <Popover placement="bottom" content={"Filtrar por Exame Clínico"}>
+                <div onClick={() => setOpcao(4)} className={styles.option}>
+                  <p>EX. CLI</p>
                 </div>
-                <div className={styles.option}>
-                  <p>E.COM</p>
+                </Popover>
+                <Popover placement="bottom" content={"Filtrar por Exame Complementares"}>
+                <div onClick={() => setOpcao(5)} className={styles.option}>
+                  <p>EX. COM</p>
                 </div>
+                </Popover>
               </div>
       
               <div className={styles.body}>
-                        <div className={styles.unit}>
-                        <div className={styles.fita}></div>
-                        <div className={styles.unitcontent}>
-                          <div className={styles.infos}>
-                          <div className={styles.principalinfo}>
-                              <h2 className={styles.unittitle}> { truncate('EHS SOLUÇÕES INTELIGENTES')}</h2>
-                              <p className={styles.unitp}>ehssolucoes@gmail.com</p>
-                            </div>
-                            <p className={styles.cep}>29550-343</p>
-                            <div className={styles.whats}>
-                              <img src="/WhatsApp.svg" style={{ height: 35 }} alt=""/>
-                            </div>
-                          </div>
-                          <div className={styles.abas}>
-                              <div className={styles.aba}>
-                                PPRA
-                              </div>
-                              <div className={styles.aba}>
-                                PCMSO
-                              </div>
-                              <div className={styles.aba}>
-                                E.C
-                              </div>
-                              <div className={styles.aba}>
-                                E.COM
-                              </div>
-                          </div>
-                        </div>
-                        </div>
 
-                        <div className={styles.unit}>
-                        <div className={styles.fita}></div>
-                        <div className={styles.unitcontent}>
-                          <div className={styles.infos}>
-                          <div className={styles.principalinfo}>
-                              <h2 className={styles.unittitle}> { truncate('SAPEC SAUDE')}</h2>
-                              <p className={styles.unitp}>ehssolucoes@gmail.com</p>
-                            </div>
-                            <p className={styles.cep}>29550-343</p>
+                { clinics.length > 0 ? data.map( unit => (
+                     <div className={styles.unit}>
+                     <div className={styles.fita}></div>
+                     <div className={styles.unitcontent}>
+                       <div className={styles.infos}>
+                       <div className={styles.principalinfo}>
+                           <h2 className={styles.unittitle}> { truncate(unit.NOME)}</h2>
+                           <p className={styles.unitp}>{ unit.EMAIL  === "" ? "Email não fornecido" : unit.EMAIL.toLowerCase()}</p>
+                         </div>
+                         <p className={styles.cep}>{unit.CEP}</p>
+                         <Popover placement="left" content={unit.WHATSAPP}>
+                         <a  target="_blank" href={`https://wa.me/+55${unit.WHATSAPPFORMATTED}?text=Olá%20${unit.NOME}.%20Estamos%20entrando%20contigo.`} >
                             <div className={styles.whats}>
                               <img src="/WhatsApp.svg" style={{ height: 35 }} alt=""/>
                             </div>
-                          </div>
-                          <div className={styles.abas}>
+                            </a>
+                            </Popover>
+                       </div>
+    
+                       <div className={styles.abas}>
+                          { unit.PCMSO && 
+                           <div className={styles.aba}>
+                           PCMSO
+                         </div> }
+                         { unit.PPRA && 
+                           <div className={styles.aba}>
+                           PPRA
+                         </div> }
+                         { unit.EXCLI && 
+                           <div className={styles.aba}>
+                           EX.CLI.
+                         </div> }
+                         { unit.EXCOM && 
+                           <div className={styles.aba}>
+                           EX.COM.
+                         </div> }
                         
-                              <div className={styles.aba}>
-                                PCMSO
-                              </div>
-                              <div className={styles.aba}>
-                                E.C
-                              </div>
-                              <div className={styles.aba}>
-                                E.COM
-                              </div>
-                          </div>
-                        </div>
-                        </div>
+                       </div>
+                     </div>
+                     </div>
 
-
-                        <div className={styles.unit}>
-                        <div className={styles.fita}></div>
-                        <div className={styles.unitcontent}>
-                          <div className={styles.infos}>
-                            <div className={styles.principalinfo}>
-                              <h2 className={styles.unittitle}> { truncate('GEREMED SAUDE E SEGURANCA OCUPACIONAL')}</h2>
-                              <p className={styles.unitp}>ehssolucoes@gmail.com</p>
-                            </div>
-                            <p className={styles.cep}>29550-343</p>
-                            <div className={styles.whats}>
-                              <img src="/WhatsApp.svg" style={{ height: 35 }} alt=""/>
-                            </div>
-                          </div>
-                          <div className={styles.abas}>
-                              <div className={styles.aba}>
-                                PPRA
-                              </div>
-                              <div className={styles.aba}>
-                                PCMSO
-                              </div>
-                             
-                          </div>
-                        </div>
-                        </div>
-
-                        <div className={styles.unit}>
-                        <div className={styles.fita}></div>
-                        <div className={styles.unitcontent}>
-                          <div className={styles.infos}>
-                          <div className={styles.principalinfo}>
-                              <h2 className={styles.unittitle}>{ truncate('EHS SOLUÇÕES INTELIGENTES')}</h2>
-                              <p className={styles.unitp}>ehssolucoes@gmail.com</p>
-                            </div>
-                            <p className={styles.cep}>29550-343</p>
-                            <div className={styles.whats}>
-                              <img src="/WhatsApp.svg" style={{ height: 35 }} alt=""/>
-                            </div>
-                          </div>
-                          <div className={styles.abas}>
-                              <div className={styles.aba}>
-                                PPRA
-                              </div>
-                              <div className={styles.aba}>
-                                PCMSO
-                              </div>
-                              <div className={styles.aba}>
-                                E.C
-                              </div>
- 
-                          </div>
-                        </div>
-                        </div>
+                )) : <Empty description="Não há clínicas nesta consulta"/> }
              
               </div>
         </section>
