@@ -22,7 +22,16 @@ export default function Home() {
     fetchData()
   },[opcao])
 
+  const fadeInRef = useRef();
+
+  useEffect(() => {
+    if(clinics.length > 0){
+    fadeInRef.current.style.opacity = 1
+    }
+  }, [clinics]);
+
   async function fetchData(){
+    fadeInRef.current.style.opacity = 0.4;
     if( opcao === "lista"){
       const clinicas__ = await fetcher.list()
       setClinics(clinicas__)
@@ -113,6 +122,7 @@ export default function Home() {
     console.log(values) 
     // store values
     setVisibleModal(false)
+    setOpcao('lista')
   }
 
   return (
@@ -170,11 +180,11 @@ export default function Home() {
       </SubMenu>
       </Menu>
       <Divider/>
-              <div className={styles.body}>
+              <div ref={fadeInRef} className={styles.body}>
 
-                { clinics.length > 0 ? clinics.map( unit => (
-                     <div className={styles.unit}>
-                     <div className={styles.fita}></div>
+                { clinics.length > 0 ? clinics.map( (unit,key) => (
+                     <div key={key} className={styles.unit}>
+                     <div className={styles.fita2}></div>
                      <div className={styles.unitcontent}>
                        <div className={styles.infos}>
                        <div className={styles.principalinfo}>
@@ -225,8 +235,9 @@ export default function Home() {
           visible={visibleModal}
           onOk={() => onFinish()}
           onCancel={() =>  { 
-            setOpcao('-')
-            setVisibleModal(false)}
+            setOpcao('lista')
+            setVisibleModal(false)
+          }
           }
           width={ width < 421 ? '95vw' : 1000}
         >

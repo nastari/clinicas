@@ -6,26 +6,27 @@
 .content {
   display: grid;
   grid-template-columns: 3fr 1fr;
+  padding-left: 20px;
+  border-left: 1px solid rgb(0,0,0,0.05);
 }
 
 .header {
   display: flex;
   border-radius: 10px;
-  background-color: rgb(253, 226, 255);
+  background-color: rgb(254, 236, 255);
   transition: all 0.5s;
-  box-shadow: 0px 3px 3px rgba(0,0,0,0.25);
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
+  border-radius: 10px 10px 0px 0px;
 }
 
-.header:hover {
-  transform: translate(5px);
+.fita , .fita2 {
+  width: 15px;
+  background-color: rgba(61, 61, 61, 0.301);
+  border-radius: 10px 0px 0px 0px;
 }
-
-.fita {
-  width: 20px;
-  background-color: rgba(170, 164, 255, 0.33);
-  border-radius: 10px 0px 0px 10px;
+.fita2 {
+  border-radius: 15px 0px 0px 15px;
 }
-
 .title {
   font-size: 1.8vw;
   margin-left: 20px;
@@ -59,16 +60,19 @@
 }
 
 .body {
+  opacity: 0.4;
+  transition:  opacity 0.5s;
   margin-top: 40px;
 }
 
 .unit {
   display: flex;
   height: 70px;
-  background-color: rgb(247, 239, 248);
+  /* background-color: rgb(247, 239, 248); */
+  background-color: rgb(242, 248, 253);
   border-radius: 15px 15px 0px 15px;
-  margin-bottom: 40px;
-  box-shadow: 0px 0px 10px rgba(0,0,0,0.25);
+  margin-bottom: 35px;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.25);
   transition: all 0.5s;
 }
 
@@ -117,11 +121,12 @@
 .aba {
   width: 15%;
   z-index: 2;
-  background-color: rgb(247, 239, 248);
+  /* background-color: rgb(247, 239, 248); */
+  background-color: rgb(242, 248, 253);
   margin-left: 5px;
   padding: 5px;
   border-radius: 0px 0px 5px 5px;
-  box-shadow: 0px 3px 3px rgba(0,0,0,0.25);
+  box-shadow: 0px 2px 3px rgba(0,0,0,0.25);
   font-size: 13px;
   cursor: pointer;
 }
@@ -157,27 +162,25 @@
 
 @media (max-width: 800px) {
   .container {
-    padding: 50px 10px;
+    padding: 20px 10px;
   }
 
   .content {
     display: grid;
     grid-template-columns: 1fr;
+    padding-left: 0px;
+    border-left: none;
   }
 
   .header {
     display: flex;
-    border-radius: 10px;
   }
 
   .header:hover {
     transform: none;
   }
   
-  .fita {
-    width: 25px;
-    border-radius: 10px 0px 0px 10px;
-  }
+
   
   .title {
     margin-left: 20px;
@@ -188,7 +191,8 @@
 
 
 .unit {
-  margin-bottom: 50px;
+  margin-bottom: 35px;
+  background-color: rgb(242, 248, 253);
 }
 
 .unit:hover {
@@ -220,6 +224,7 @@
   display: flex;
   justify-content: flex-end;
   text-align: center;
+  
 }
 
 .aba {
@@ -229,6 +234,7 @@
   border-radius: 0px 0px 5px 5px;
   box-shadow: 0px 3px 3px rgba(0,0,0,0.15);
   font-size: 12px;
+  background-color: rgb(242, 248, 253);
 }
 
 .whats {
