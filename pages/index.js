@@ -2,13 +2,19 @@ import Head from 'next/head'
 import { useState, useEffect , useRef } from 'react'
 import styles from '../styles/Home.module.css'
 // import data_ from '../data'
-import { Popover,  Empty , Menu, Drawer , Divider , Col, Row , Spin,  Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
+import { Popover,  Empty , Menu, Drawer ,Divider , message, Col, Row , Spin,  Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
 import { UnorderedListOutlined, TagOutlined,  SearchOutlined ,  PlusOutlined} from '@ant-design/icons';
 const { SubMenu } = Menu;
+const { Item } = Form;
 import GoogleMapReact from 'google-map-react';
 import * as fetcher from '../support/fetch'
 
 export default function Home() {
+
+  ///
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  ///
 
   const [ opcao , setOpcao ] = useState("lista");
   const [ clinics, setClinics ] = useState([])
@@ -119,9 +125,66 @@ export default function Home() {
   }
 
   const onFinish = async (values) => { 
-    console.log(values) 
-    // store values
+    
+
+    values.SERVICOS.map( service => {
+    
+          if(service==="PPRA"){
+            values.PPRA = true
+          } else {
+            values.PPRA = false
+          }
+
+          if(service==="PCMSO"){
+            values.PCMSO = true
+          } else {
+            values.PCMSO = false
+          }
+
+          if(service==="EXCLI"){
+            values.EXCLI = true
+          } else {
+            values.EXCLI = false
+          }
+
+          if(service==="EXCOM"){
+            values.EXCOM = true
+          } else {
+            values.EXCOM = false
+          }     
+    })
+
+    
+    setLoadingSubmit(true);
+    const response = await fetch(
+      `http://clinicasserver.herokuapp.com/store`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          NOME: values.NOME,
+          ENDEREÇO: values.ENDERECO,
+          EMAIL: values.EMAIL,
+          CEP: values.CEP,
+          WHATSAPP: values.WHATSAPP,
+          PPRA:values.PPRA,
+          PCMSO:values.PCMSO,
+          EXCLI:values.EXCLI,
+          EXCOM:values.EXCOM
+        }),
+      }
+    );
+
+    setLoadingSubmit(false);
     setVisibleModal(false)
+    if (response.ok) {
+      message.success('Clínica criado com sucesso.');
+    } else {
+      message.warning('Erro ao criar clínica.');
+    }
     setOpcao('lista')
   }
 
@@ -183,6 +246,7 @@ export default function Home() {
               <div ref={fadeInRef} className={styles.body}>
 
                 { clinics.length > 0 ? clinics.map( (unit,key) => (
+
                      <div key={key} className={styles.unit}>
                      <div className={styles.fita2}></div>
                      <div className={styles.unitcontent}>
@@ -230,6 +294,8 @@ export default function Home() {
         </section>
         <section className={styles.right}>
           <Modal
+          cancelButtonProps={{ style: { display: 'none' } }}
+          okButtonProps={{ style: { display: 'none' } }}
           title="Adicionar Clínica"
           centered
           visible={visibleModal}
@@ -241,103 +307,88 @@ export default function Home() {
           }
           width={ width < 421 ? '95vw' : 1000}
         >
-          {/* <div
-              style={{
-                textAlign: 'right',
-              }}
-            >
-              <Button onClick={() => onClose()} style={{ marginRight: 8 }}>
-                Cancel
-              </Button>
-              <Button onClick={() => onClose()} type="primary">
-                Submit
-              </Button>
-            </div> */}
-          
-          <Form layout="vertical" hideRequiredMark onFinish={onFinish}>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="name"
-                  label="Name"
-                  rules={[{ required: true, message: 'Coloque nome da clínica' }]}
-                >
-                  <Input placeholder="Nome da Clínica" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="endereco"
-                  label="Endereco"
-                  rules={[{ required: true, message: 'Coloque o endereço' }]}
-                >
-                  <Input
-                    style={{ width: '100%' }}
-                    placeholder="Coloque o endereço"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="telefone"
-                  label="Telefone/WhatsApp"
-                  rules={[{ required: true, message: 'Coloque o whatsapp comercial' }]}
-                >
-                    <Input
-                    style={{ width: '100%' }}
-                    placeholder="Whatsapp comercial"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="cep"
-                  label="CEP"
-                  rules={[{ required: true, message: 'Coloque o CEP' }]}
-                >
-                   <Input
-                    style={{ width: '100%' }}
+<Form onFinish={onFinish} name="basic" >
+          <p>Nome da Clínica</p>
+          <Item name="NOME">
+       
+            <Input
+              
+              placeholder="Nome do Colaborador"
+              type="text"
+            />
+          </Item>
+          <p>Email Comercial</p>
+          <Item name="EMAIL">
+       
+            <Input
+              
+              placeholder="Email Comercial"
+              type="text"
+            />
+          </Item>
+          <Row gutter={16}>
+          <Col span={18}>
+           <p>Endereço Comercial</p> 
+          <Item name="ENDEREC0">
+           
+            <Input
+              
+              placeholder="Endereço Comercial"
+              type="text"
+            />
+          </Item>
+          </Col>
+          <Col span={6}>
+            <p>CEP</p>
+          <Item name="CEP">
+            <Input
+              
+              placeholder="CEP"
+              type="text"
+            />
+          </Item>
+          </Col>
+          </Row>
+          <p>WhatsApp</p>
+          <Item name="WHATSAPP">
+            {/* WhatsApp */}
+            <Input
+              
+              placeholder="WhatsApp"
+              type="text"
+            />
+          </Item>
 
-                    placeholder="CEP"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="email"
-                  label="Email"
-                  rules={[{ required: true, message: 'Digite o email comercial' }]}
-                >
-                  <Input
-                    style={{ width: '100%' }}
-
-                    placeholder="Email"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-              <Checkbox.Group style={{ width: '100%' }} onChange={onChange}>
+          <Item name="SERVICOS">
+          <Checkbox.Group style={{ width: '100%' }} onChange={onChange}>
                 <p style={{ fontSize: 15 }}>Serviços</p>
                 <Row>
                   <Col span={8}>
-                    <Checkbox value="A">PPRA</Checkbox>
+                    <Checkbox value="PPRA">PPRA</Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="B">PCMSO</Checkbox>
+                    <Checkbox value="PCMSO">PCMSO</Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">Exames Clínicos</Checkbox>
+                    <Checkbox value="EXCLI">Exames Clínicos</Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="D">Exames Complementares</Checkbox>
+                    <Checkbox value="EXCOM">Exames Complementares</Checkbox>
                   </Col>
                 </Row>
               </Checkbox.Group>
-            </Form>
+      </Item>
+          <Item className={styles.itemMobileButton}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loadingSubmit}
+              className={styles.button}
+            >
+              {loadingSubmit ? '' : 'CADASTRAR'}
+            </Button>
+          </Item>
+        </Form>
           </Modal>
         <Drawer
           width={width < 421 ? 300 : 620 }
@@ -370,7 +421,7 @@ export default function Home() {
         </Row>
         <Row>
           <Col style={{ marginBottom: 5 }}  span={12}>
-            <DescriptionItem title="Registrado" content={`${ (Math.floor(Math.random()*28))} de Setembro`} />
+            <DescriptionItem title="Registrado" content={`${ (Math.floor(Math.random()*28) + 1)} de Dezembro`} />
           </Col>
           <Col style={{ marginBottom: 5 }}  span={12}>
             <DescriptionItem title="Endereço" content={ator.ENDEREÇO} />
@@ -389,7 +440,6 @@ export default function Home() {
           <AnyReactComponent
             lat={ator.LOCATION.lat}
             lng={ator.LOCATION.lng}
-            text="My Marker"
           />
         </GoogleMapReact>
           </div>
@@ -424,4 +474,4 @@ export default function Home() {
 //   }
 // }
 
-const AnyReactComponent = ({ text }) => <img style={{ height: 20 }} src="/cc.svg" alt=""/>
+const AnyReactComponent = () => <img style={{ height: 20 }} src="/cc.svg" alt=""/>
