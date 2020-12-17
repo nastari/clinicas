@@ -2,17 +2,19 @@ import Head from 'next/head'
 import { useState, useEffect , useRef } from 'react'
 import styles from '../styles/Home.module.css'
 import data_ from '../data'
-import { Popover,  Empty , Menu, Drawer , Divider , Col, Row } from 'antd';
+import { Popover,  Empty , Menu, Drawer , Divider , Col, Row , Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
 import { UnorderedListOutlined, TagOutlined,  SearchOutlined ,  PlusOutlined} from '@ant-design/icons';
 const { SubMenu } = Menu;
 import GoogleMapReact from 'google-map-react';
 
 export default function Home() {
 
-  const [ opcao , setOpcao ] = useState(0)
+  const [ opcao , setOpcao ] = useState("lista");
   const [ clinics, setClinics ] = useState([])
   const [ ator, setActor ] = useState(null);
   const [ width, setWidth ] = useState(1024);
+  const [visible, setVisible] = useState(false);
+  const [visibleModal, setVisibleModal] = useState(false);
 
   const data = data_.filter( unit => { 
     unit['SERVIÇOS DISPONÍVEIS'] = unit['SERVIÇOS DISPONÍVEIS'].toLowerCase()
@@ -45,29 +47,31 @@ export default function Home() {
   })
 
   useEffect(() => {
-    a()
+    if( opcao === "lista"){
+      getClinics()
+    } else if ( opcao === "plus"){
+      setVisibleModal(true);
+    }
+
   },[opcao]);
 
-  function a(){
+  function getClinics(){
     setClinics(data)
+  }
+
+  const handleChangeOption = (e) => {
+    console.log(e.key);
+    setOpcao(e.key);
   }
 
   useEffect(() => {
     setWidth(window.screen.width)
   },[width])
 
-  const [visible, setVisible] = useState(false);
-
   const showDrawer = async (unit) => {
     const replaced = unit.ENDEREÇO.replace(/ /g, '+')
-   
-     const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${replaced}&key=AIzaSyBXM7zi8hwm1DX6d9jVA5PGc5h02TC3_7o`)
-    
+     const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${replaced}&key=AIzaSyBXM7zi8hwm1DX6d9jVA5PGc5h02TC3_7o`) 
      const r = await response.json();
-    //  console.log(r);
-    console.log('aksdo');
-    console.log(r.results[0]);
-    console.log('----');
      if(r.results[0].geometry !== undefined ){
         unit.LOCATION = r.results[0].geometry.location
      } else {
@@ -76,8 +80,7 @@ export default function Home() {
         lng: 30.33
       }
      }
-     console.log(unit);
-     setActor(unit)
+    setActor(unit)
     setVisible(true);
   };
   const onClose = () => {
@@ -92,8 +95,16 @@ export default function Home() {
     </div>
   );
 
-
   const truncate = (input) => input.length > 25 ? `${input.substring(0, 25)}...` : input;
+
+  function onChange(checkedValues) {
+    console.log('checked = ', checkedValues);
+  }
+
+  const onFinish = async (values) => { 
+    console.log(values) 
+    setVisibleModal(false)
+  }
 
   return (
     <div className={styles.container}>
@@ -109,29 +120,29 @@ export default function Home() {
                 <div className={styles.fita}></div>
                 <h1 className={styles.title}>VISUALIZADOR DE CLÍNICAS</h1>
               </div>
-              <Menu selectedKeys={["mail"]} mode="horizontal">
-        <Menu.Item key="mail" icon={<UnorderedListOutlined />}>
+              <Menu selectedKeys={[opcao]} onClick={(e) => handleChangeOption(e)} mode="horizontal">
+        <Menu.Item key="lista" icon={<UnorderedListOutlined />}>
         <Popover placement="top" content={"Lista de Clínicas"}>
          Listagem
          </Popover>
         </Menu.Item>
-        <Menu.Item key="app" icon={<PlusOutlined />}>
+        <Menu.Item key="plus" icon={<PlusOutlined />}>
         <Popover placement="top" content={"Adicionar Clínica"}>
           Clínica
           </Popover>
         </Menu.Item>
-        <SubMenu key="SubMenu" icon={<SearchOutlined />} title="Filtrar por">
+        <SubMenu key="buscar" icon={<SearchOutlined />} title="Filtrar por">
           
-            <Menu.Item key="setting:1">PCMSO</Menu.Item>
-            <Menu.Item key="setting:2">PPRA</Menu.Item>
+            <Menu.Item key="buscar:1">PCMSO</Menu.Item>
+            <Menu.Item key="buscar:2">PPRA</Menu.Item>
         
-            <Menu.Item key="setting:3">Exames Clínicos</Menu.Item>
-            <Menu.Item key="setting:4">Exames Complementares</Menu.Item>
+            <Menu.Item key="buscar:3">Exames Clínicos</Menu.Item>
+            <Menu.Item key="buscar:4">Exames Complementares</Menu.Item>
   
         </SubMenu>
-        <SubMenu key="organize" icon={<TagOutlined />} title="Organizar por">
+        <SubMenu key="ordenar" icon={<TagOutlined />} title="Organizar por">
           
-          <Menu.Item key="setting:1">Ordem Alfabética</Menu.Item>
+          <Menu.Item key="ordenar:1">Ordem Alfabética</Menu.Item>
 
 
       </SubMenu>
@@ -186,6 +197,112 @@ export default function Home() {
               </div>
         </section>
         <section className={styles.right}>
+          <Modal
+          title="Adicionar Clínica"
+          centered
+          visible={visibleModal}
+          onOk={() => onFinish()}
+          onCancel={() => setVisibleModal(false)}
+          width={ width < 421 ? '95vw' : 1000}
+        >
+          {/* <div
+              style={{
+                textAlign: 'right',
+              }}
+            >
+              <Button onClick={() => onClose()} style={{ marginRight: 8 }}>
+                Cancel
+              </Button>
+              <Button onClick={() => onClose()} type="primary">
+                Submit
+              </Button>
+            </div> */}
+          
+          <Form layout="vertical" hideRequiredMark onFinish={onFinish}>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="name"
+                  label="Name"
+                  rules={[{ required: true, message: 'Coloque nome da clínica' }]}
+                >
+                  <Input placeholder="Nome da Clínica" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="endereco"
+                  label="Endereco"
+                  rules={[{ required: true, message: 'Coloque o endereço' }]}
+                >
+                  <Input
+                    style={{ width: '100%' }}
+                    placeholder="Coloque o endereço"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="telefone"
+                  label="Telefone/WhatsApp"
+                  rules={[{ required: true, message: 'Coloque o whatsapp comercial' }]}
+                >
+                    <Input
+                    style={{ width: '100%' }}
+                    placeholder="Whatsapp comercial"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="cep"
+                  label="CEP"
+                  rules={[{ required: true, message: 'Coloque o CEP' }]}
+                >
+                   <Input
+                    style={{ width: '100%' }}
+
+                    placeholder="CEP"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="email"
+                  label="Email"
+                  rules={[{ required: true, message: 'Digite o email comercial' }]}
+                >
+                  <Input
+                    style={{ width: '100%' }}
+
+                    placeholder="Email"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+              <Checkbox.Group style={{ width: '100%' }} onChange={onChange}>
+                <p style={{ fontSize: 15 }}>Serviços</p>
+                <Row>
+                  <Col span={8}>
+                    <Checkbox value="A">PPRA</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="B">PCMSO</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">Exames Clínicos</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="D">Exames Complementares</Checkbox>
+                  </Col>
+                </Row>
+              </Checkbox.Group>
+            </Form>
+          </Modal>
         <Drawer
           width={width < 421 ? 300 : 620 }
           placement="right"
@@ -223,42 +340,10 @@ export default function Home() {
             <DescriptionItem title="Endereço" content={ator.ENDEREÇO} />
           </Col>
         </Row>
-        {/* <Row>
-          <Col span={24}>
-            <DescriptionItem
-              title="Message"
-              content="Make things as simple as possible but no simpler."
-            />
-          </Col>
-        </Row> */}
         <Divider />
-        {/* <p className="site-description-item-profile-p">Company</p>
-        <Row>
-          <Col span={12}>
-            <DescriptionItem title="Position" content="Programmer" />
-          </Col>
-          <Col span={12}>
-            <DescriptionItem title="Responsibilities" content="Coding" />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <DescriptionItem title="Department" content="XTech" />
-          </Col>
-          <Col span={12}>
-            <DescriptionItem title="Supervisor" content={<a>Lin</a>} />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <DescriptionItem
-              title="Skills"
-              content="C / C + +, data structures, software engineering, operating systems, computer networks, databases, compiler theory, computer architecture, Microcomputer Principle and Interface Technology, Computer English, Java, ASP, etc."
-            />
-          </Col>
-        </Row> */}
+        
 
-    <h3>My Google Maps Demo</h3>
+    <h3>Localização</h3>
     <div className={styles.map}>
     <GoogleMapReact
           bootstrapURLKeys={{ key: 'AIzaSyBXM7zi8hwm1DX6d9jVA5PGc5h02TC3_7o' }}

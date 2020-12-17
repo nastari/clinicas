@@ -72,9 +72,6 @@
   transition: all 0.5s;
 }
 
-/* .unit:hover {
-  box-shadow: 0px 3px 5px rgba(0,0,0,0.45);
-} */
 
 .unitcontent {
   display: flex;
@@ -90,10 +87,18 @@
   margin-left: 20px;
 }
 
+
+
 .unittitle {
   font-size: 1.4vw;
   font-weight: 400;
+  transition: all 0.5s;
 }
+
+/* .unittitle:hover {
+  color:rgb(150, 94, 255);
+} */
+
 
 .unitp {
   font-size: 1vw;
@@ -146,11 +151,6 @@
   margin-right: 5vw;
   font-size: 1.3vw;
   cursor: pointer;
-}
-
-
-.block {
-  background-color: red;
 }
 
 
