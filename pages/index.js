@@ -1,11 +1,12 @@
 import Head from 'next/head'
 import { useState, useEffect , useRef } from 'react'
 import styles from '../styles/Home.module.css'
-import data_ from '../data'
-import { Popover,  Empty , Menu, Drawer , Divider , Col, Row , Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
+// import data_ from '../data'
+import { Popover,  Empty , Menu, Drawer , Divider , Col, Row , Spin,  Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
 import { UnorderedListOutlined, TagOutlined,  SearchOutlined ,  PlusOutlined} from '@ant-design/icons';
 const { SubMenu } = Menu;
 import GoogleMapReact from 'google-map-react';
+import * as fetcher from '../support/fetch'
 
 export default function Home() {
 
@@ -16,53 +17,60 @@ export default function Home() {
   const [visible, setVisible] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
 
-  const data = data_.filter( unit => { 
-    unit['SERVIÇOS DISPONÍVEIS'] = unit['SERVIÇOS DISPONÍVEIS'].toLowerCase()
-    if(unit["SERVIÇOS DISPONÍVEIS"].includes('pcmso')){
-      unit.PCMSO = true
-    } else {
-      unit.PCMSO = false
-    }
-
-    if(unit["SERVIÇOS DISPONÍVEIS"].includes('ppra')){
-      unit.PPRA = true
-    } else {
-      unit.PPRA = false
-    }
-
-    if(unit["SERVIÇOS DISPONÍVEIS"].includes('exames clínicos')){
-      unit.EXCLI = true
-    } else {
-      unit.EXCLI = false
-    }
-
-    if(unit["SERVIÇOS DISPONÍVEIS"].includes('exames complementares')){
-      unit.EXCOM = true
-    } else {
-      unit.EXCOM = false
-    }
-
-    unit.WHATSAPPFORMATTED = unit.WHATSAPP.replace(/[^0-9]/g, '');
-    return unit
-  })
 
   useEffect(() => {
+    fetchData()
+  },[opcao])
+
+  async function fetchData(){
     if( opcao === "lista"){
-      getClinics()
+      const clinicas__ = await fetcher.list()
+      setClinics(clinicas__)
     } else if ( opcao === "plus"){
       setVisibleModal(true);
+    } else if ( opcao.includes('buscar')){
+      const clinics__ = await fetcher.query(opcao)
+      setClinics(clinics__)
+    } else if ( opcao.includes('ordenar')){
+      const clinics__ = await fetcher.sort()
+      setClinics(clinics__)
     }
-
-  },[opcao]);
-
-  function getClinics(){
-    setClinics(data)
   }
 
-  const handleChangeOption = (e) => {
-    console.log(e.key);
-    setOpcao(e.key);
-  }
+
+  // const data = data_.filter( unit => { 
+  //   unit['SERVIÇOS DISPONÍVEIS'] = unit['SERVIÇOS DISPONÍVEIS'].toLowerCase()
+  //   if(unit["SERVIÇOS DISPONÍVEIS"].includes('pcmso')){
+  //     unit.PCMSO = true
+  //   } else {
+  //     unit.PCMSO = false
+  //   }
+
+  //   if(unit["SERVIÇOS DISPONÍVEIS"].includes('ppra')){
+  //     unit.PPRA = true
+  //   } else {
+  //     unit.PPRA = false
+  //   }
+
+  //   if(unit["SERVIÇOS DISPONÍVEIS"].includes('exames clínicos')){
+  //     unit.EXCLI = true
+  //   } else {
+  //     unit.EXCLI = false
+  //   }
+
+  //   if(unit["SERVIÇOS DISPONÍVEIS"].includes('exames complementares')){
+  //     unit.EXCOM = true
+  //   } else {
+  //     unit.EXCOM = false
+  //   }
+
+  //   unit.WHATSAPPFORMATTED = unit.WHATSAPP.replace(/[^0-9]/g, '');
+  //   return unit
+  // })
+
+
+  const handleChangeOption = (e) =>  setOpcao(e.key);
+  
 
   useEffect(() => {
     setWidth(window.screen.width)
@@ -103,13 +111,14 @@ export default function Home() {
 
   const onFinish = async (values) => { 
     console.log(values) 
+    // store values
     setVisibleModal(false)
   }
 
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Visualizador de Clínicas</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -121,7 +130,18 @@ export default function Home() {
                 <h1 className={styles.title}>VISUALIZADOR DE CLÍNICAS</h1>
               </div>
               <Menu selectedKeys={[opcao]} onClick={(e) => handleChangeOption(e)} mode="horizontal">
-        <Menu.Item key="lista" icon={<UnorderedListOutlined />}>
+
+        { width < 421 ? <>
+         <Menu.Item key="lista" icon={<UnorderedListOutlined />}>
+          Listagem
+         </Menu.Item>
+         <Menu.Item key="plus" icon={<PlusOutlined />}>
+  
+           Clínica
+       
+         </Menu.Item>
+         </> : <>
+          <Menu.Item key="lista" icon={<UnorderedListOutlined />}>
         <Popover placement="top" content={"Lista de Clínicas"}>
          Listagem
          </Popover>
@@ -131,6 +151,8 @@ export default function Home() {
           Clínica
           </Popover>
         </Menu.Item>
+        </> }
+       
         <SubMenu key="buscar" icon={<SearchOutlined />} title="Filtrar por">
           
             <Menu.Item key="buscar:1">PCMSO</Menu.Item>
@@ -150,7 +172,7 @@ export default function Home() {
       <Divider/>
               <div className={styles.body}>
 
-                { clinics.length > 0 ? data.map( unit => (
+                { clinics.length > 0 ? clinics.map( unit => (
                      <div className={styles.unit}>
                      <div className={styles.fita}></div>
                      <div className={styles.unitcontent}>
@@ -192,7 +214,7 @@ export default function Home() {
                      </div>
                      </div>
 
-                )) : <Empty description="Não há clínicas nesta consulta"/> }
+                )) : <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large"/></div> }
              
               </div>
         </section>
@@ -202,7 +224,10 @@ export default function Home() {
           centered
           visible={visibleModal}
           onOk={() => onFinish()}
-          onCancel={() => setVisibleModal(false)}
+          onCancel={() =>  { 
+            setOpcao('-')
+            setVisibleModal(false)}
+          }
           width={ width < 421 ? '95vw' : 1000}
         >
           {/* <div
