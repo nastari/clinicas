@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useState, useEffect , useRef } from 'react'
 import styles from '../styles/Home.module.css'
 // import data_ from '../data'
-import { Popover,  Empty , Menu, Drawer ,Divider , message, Col, Row , Spin,  Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
+import { Popover,  Empty , Menu, Drawer ,Divider , Card, message, Col, Row , Spin,  Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
 import { UnorderedListOutlined, TagOutlined,  SearchOutlined ,  PlusOutlined} from '@ant-design/icons';
 const { SubMenu } = Menu;
 const { Item } = Form;
@@ -193,6 +193,7 @@ export default function Home() {
       <Head>
         <title>Visualizador de Clínicas</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/> 
       </Head>
 
 
@@ -246,7 +247,7 @@ export default function Home() {
               <div ref={fadeInRef} className={styles.body}>
 
                 { clinics.length > 0 ? clinics.map( (unit,key) => (
-
+                   
                      <div key={key} className={styles.unit}>
                      <div className={styles.fita2}></div>
                      <div className={styles.unitcontent}>
@@ -287,7 +288,7 @@ export default function Home() {
                        </div>
                      </div>
                      </div>
-
+                    
                 )) : <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large"/></div> }
              
               </div>
