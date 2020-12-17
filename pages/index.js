@@ -157,7 +157,7 @@ export default function Home() {
     
     setLoadingSubmit(true);
     const response = await fetch(
-      `http://clinicasserver.herokuapp.com/store`,
+      `https://clinicasserver.herokuapp.com/store`,
       {
         method: 'POST',
         headers: {
