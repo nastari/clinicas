@@ -384,7 +384,7 @@ export default function Home() {
     <GoogleMapReact
           bootstrapURLKeys={{ key: 'AIzaSyBXM7zi8hwm1DX6d9jVA5PGc5h02TC3_7o' }}
           defaultCenter={ator.LOCATION}
-          defaultZoom={ width < 421 ? 11 : 11}
+          defaultZoom={13}
         >
           <AnyReactComponent
             lat={ator.LOCATION.lat}
@@ -424,4 +424,4 @@ export default function Home() {
 //   }
 // }
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>
+const AnyReactComponent = ({ text }) => <img style={{ height: 20 }} src="/cc.svg" alt=""/>
