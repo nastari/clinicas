@@ -93,9 +93,9 @@ export default function Home() {
   const truncate = (input) =>
     input.length > 20 ? `${input.substring(0, 20)}...` : input;
 
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
+  // function onChange(checkedValues) {
+  //   console.log('checked = ', checkedValues);
+  // }
 
   const onFinish = async (values) => {
     values.SERVICOS.map((service) => {
@@ -115,7 +115,7 @@ export default function Home() {
         values.EXCOM = true;
       }
     });
-
+    console.log(values);
     setLoadingSubmit(true);
     const response = await fetch('https://clinicasserver.herokuapp.com/store', {
       method: 'POST',
@@ -135,7 +135,7 @@ export default function Home() {
         EXCOM: values.EXCOM,
       }),
     });
-
+    console.log(response);
     setLoadingSubmit(false);
     setVisibleModal(false);
     if (response.ok) {
@@ -323,7 +323,10 @@ export default function Home() {
               </Item>
 
               <Item name="SERVICOS">
-                <Checkbox.Group style={{ width: '100%' }} onChange={onChange}>
+                <Checkbox.Group
+                  style={{ width: '100%' }}
+                  // onChange={onChange}
+                >
                   <p style={{ fontSize: 15 }}>Serviços</p>
                   <Row>
                     <Col span={8}>
