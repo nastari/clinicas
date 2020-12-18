@@ -1,8 +1,7 @@
 import Head from 'next/head'
 import { useState, useEffect , useRef } from 'react'
 import styles from '../styles/Home.module.css'
-// import data_ from '../data'
-import { Popover,  Empty , Menu, Drawer ,Divider , Card, message, Col, Row , Spin,  Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
+import { Popover,   Menu, Drawer ,Divider ,  message, Col, Row , Spin,  Modal, Form , Button , Input , Checkbox,  Select , DatePicker } from 'antd';
 import { UnorderedListOutlined, TagOutlined,  SearchOutlined ,  PlusOutlined} from '@ant-design/icons';
 const { SubMenu } = Menu;
 const { Item } = Form;
@@ -11,10 +10,8 @@ import * as fetcher from '../support/fetch'
 
 export default function Home() {
 
-  ///
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
-  ///
 
   const [ opcao , setOpcao ] = useState("lista");
   const [ clinics, setClinics ] = useState([])
@@ -51,37 +48,6 @@ export default function Home() {
       setClinics(clinics__)
     }
   }
-
-
-  // const data = data_.filter( unit => { 
-  //   unit['SERVIÇOS DISPONÍVEIS'] = unit['SERVIÇOS DISPONÍVEIS'].toLowerCase()
-  //   if(unit["SERVIÇOS DISPONÍVEIS"].includes('pcmso')){
-  //     unit.PCMSO = true
-  //   } else {
-  //     unit.PCMSO = false
-  //   }
-
-  //   if(unit["SERVIÇOS DISPONÍVEIS"].includes('ppra')){
-  //     unit.PPRA = true
-  //   } else {
-  //     unit.PPRA = false
-  //   }
-
-  //   if(unit["SERVIÇOS DISPONÍVEIS"].includes('exames clínicos')){
-  //     unit.EXCLI = true
-  //   } else {
-  //     unit.EXCLI = false
-  //   }
-
-  //   if(unit["SERVIÇOS DISPONÍVEIS"].includes('exames complementares')){
-  //     unit.EXCOM = true
-  //   } else {
-  //     unit.EXCOM = false
-  //   }
-
-  //   unit.WHATSAPPFORMATTED = unit.WHATSAPP.replace(/[^0-9]/g, '');
-  //   return unit
-  // })
 
 
   const handleChangeOption = (e) =>  setOpcao(e.key);
@@ -124,37 +90,30 @@ export default function Home() {
     console.log('checked = ', checkedValues);
   }
 
+  
   const onFinish = async (values) => { 
     
 
-    values.SERVICOS.map( service => {
-    
+    values.SERVICOS.map( (service) => {
+          
           if(service==="PPRA"){
             values.PPRA = true
-          } else {
-            values.PPRA = false
-          }
+          } 
 
           if(service==="PCMSO"){
             values.PCMSO = true
-          } else {
-            values.PCMSO = false
-          }
+          } 
 
           if(service==="EXCLI"){
             values.EXCLI = true
-          } else {
-            values.EXCLI = false
-          }
+          } 
 
           if(service==="EXCOM"){
             values.EXCOM = true
-          } else {
-            values.EXCOM = false
-          }     
+          }    
     })
 
-    
+    console.log(values);
     setLoadingSubmit(true);
     const response = await fetch(
       `https://clinicasserver.herokuapp.com/store`,
@@ -177,7 +136,7 @@ export default function Home() {
         }),
       }
     );
-
+      console.log(response);
     setLoadingSubmit(false);
     setVisibleModal(false)
     if (response.ok) {
@@ -193,7 +152,7 @@ export default function Home() {
       <Head>
         <title>Visualizador de Clínicas</title>
         <link rel="icon" href="/favicon.ico" />
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/> 
+  
       </Head>
 
 
@@ -268,22 +227,22 @@ export default function Home() {
                        </div>
     
                        <div className={styles.abas}>
-                          { unit.PCMSO && 
+                          {  unit.PCMSO === true ? 
                            <div className={styles.aba}>
                            PCMSO
-                         </div> }
-                         { unit.PPRA && 
+                         </div> : null }
+                         {  unit.PPRA === true ? 
                            <div className={styles.aba}>
                            PPRA
-                         </div> }
-                         { unit.EXCLI && 
+                         </div> : null }
+                         {  unit.EXCLI === true ?
                            <div className={styles.aba}>
                            EX.CLI.
-                         </div> }
-                         { unit.EXCOM && 
+                         </div> : null }
+                         {  unit.EXCOM === true ?
                            <div className={styles.aba}>
                            EX.COM.
-                         </div> }
+                         </div> : null }
                         
                        </div>
                      </div>
@@ -320,17 +279,15 @@ export default function Home() {
           </Item>
           <p>Email Comercial</p>
           <Item name="EMAIL">
-       
             <Input
-              
               placeholder="Email Comercial"
-              type="text"
+              type="email"
             />
           </Item>
           <Row gutter={16}>
           <Col span={18}>
            <p>Endereço Comercial</p> 
-          <Item name="ENDEREC0">
+          <Item name="ENDERECO">
            
             <Input
               
@@ -352,7 +309,6 @@ export default function Home() {
           </Row>
           <p>WhatsApp</p>
           <Item name="WHATSAPP">
-            {/* WhatsApp */}
             <Input
               
               placeholder="WhatsApp"
