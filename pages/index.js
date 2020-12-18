@@ -115,7 +115,7 @@ export default function Home() {
         values.EXCOM = true;
       }
     });
-    console.log(values);
+
     setLoadingSubmit(true);
     const response = await fetch('https://clinicasserver.herokuapp.com/store', {
       method: 'POST',
@@ -135,7 +135,7 @@ export default function Home() {
         EXCOM: values.EXCOM,
       }),
     });
-    console.log(response);
+
     setLoadingSubmit(false);
     setVisibleModal(false);
     if (response.ok) {
